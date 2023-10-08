@@ -42,7 +42,7 @@ python3 manage.py runserver
 ```
 - Open views.py inside the egareye folder
 	- Here `monitorMovie()` function is written in two ways
-	- Comment anyone -> one id for when monitoring script is run in your vm, the other is for when the script runs in your local machine. Read the comments to understand which is which
+	- Comment anyone -> one is for when monitoring script is run in your vm, the other is for when the script runs in your local machine. Read the comments to understand which is which
 - Backend runs at` http://127.0.0.1:8000/`
 - Try 
 	- `http://127.0.0.1:8000/running/hyderabad`
