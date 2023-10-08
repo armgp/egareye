@@ -56,3 +56,46 @@ python3 manage.py runserver
 ```text
 Note: These scripts should be uploaded to your vm and the path values in monitor.py and start.py should also be changed to the vm paths if you are using a vm for running the scripts.
 ```
+
+### Project Overview
+
+This project aims to create a platform where users can receive phone call notifications for their favorite movies when booking opens. The frontend, built with React.js and styled with Tailwind CSS, provides a form where users can enter their name, phone number, city, and select a movie. The form dynamically updates the movie list based on the selected city, fetched via API calls to the Django backend.
+
+### Backend Functionality
+
+#### Endpoints:
+
+1. `GET /allmovies/<cityname>`: Returns a list of all upcoming and currently running movies in a specific city.
+2. `GET /running/<cityname>`: Returns a list of currently running movies in a specific city.
+3. `GET /upcoming/<cityname>`: Returns a list of upcoming movies in a specific city.
+4. `POST /monitor`: Accepts form data (name, phone number, selected movie, selected city) to set up phone call notifications.
+
+#### Workflow:
+
+- When the user submits the form, a POST request is sent to `/monitor` with the user's information.
+- The backend's `monitorMovie()` function is triggered, which connects to an Azure virtual machine (VM) running Ubuntu.
+- The `start.py` script is executed on the VM with movie, city, and URL arguments.
+- `start.py` checks if a monitoring process for the movie in the city is already running. If yes, it updates the phone number list. If not, a new process is initiated.
+- The `monitor.py` script, running infinitely, checks every 30 minutes if the bookings for the specified movie in the city are open.
+- If bookings are open, `monitor.py` notifies all subscribed phone numbers using the **PLIVO** API for phone call notifications.
+- After notifications are sent, data in `phoneNumbers.json` and `processId.json` is cleared, and the process is terminated.
+
+### Key Components and Technologies
+
+- **Frontend:** React.js, Tailwind CSS
+- **Backend:** Django REST Framework
+- **External Services:** **PLIVO** for phone call notifications
+- **Scraping:** BeautifulSoup for scraping movie booking links from `https://ticketnew.com/`
+
+### Design Decisions
+
+- The frontend provides an intuitive form for user input, dynamically updating movie options based on selected city.
+- Backend API endpoints allow fetching movie data for specific cities and subscribing users for notifications.
+- Azure VM is used for running the monitoring scripts, ensuring the execution environment is separate and scalable.
+- **PLIVO** API integration enables automated phone call notifications for users.
+
+### Improvements and Future Work
+
+- Implement error handling and logging for better monitoring of the system.
+- Enhance frontend with additional features, such as user authentication and subscription management.
+- Optimize the monitoring process to reduce the frequency of API calls for improved performance and cost efficiency.
