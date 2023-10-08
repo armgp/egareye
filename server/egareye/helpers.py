@@ -1,9 +1,12 @@
-import json
+import paramiko
 import requests
 import random
 import time
+import os
 from bs4 import BeautifulSoup
 from egareye.constants import RUNNING, UPCOMING
+from dotenv import load_dotenv
+
 
 UAS = ("Mozilla/5.0 (Windows NT 6.1; WOW64; rv:40.0) Gecko/20100101 Firefox/40.1", 
         "Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0",
@@ -58,3 +61,27 @@ def monitorloop(movie, url_movie, freq, city):
         n-=1
         time.sleep(freq)
         
+def runOnVM(command):
+    load_dotenv()
+
+    host = os.getenv("MONITOR_VM_HOST")
+    port = os.getenv("MONITOR_VM_PORT")  
+    username = os.getenv("MONITOR_VM_USERNAME")
+    password = os.getenv("MONITOR_VM_PASSWORD")  
+
+    try:
+        ssh = paramiko.SSHClient()
+        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        ssh.connect(host, port=port, username=username, password=password, timeout=60)
+
+        stdin, stdout, stderr = ssh.exec_command(command, timeout=60)
+
+        print("Output of 'monitor.py' script:")
+        print(stdout.read().decode())
+
+    except Exception as e:
+        print("An error occurred:", str(e))
+
+    finally:
+        if ssh is not None:
+            ssh.close()

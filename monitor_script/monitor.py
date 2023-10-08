@@ -55,6 +55,7 @@ def makeCall(client_number):
     response = client.calls.create(
         from_=number,
         to_=client_number,
+        # to_ = '+917012496675<+917907914941',
         answer_url='https://s3.amazonaws.com/static.plivo.com/answer.xml',
         # answer_url='https://static.staticsave.com/plivo/answer.xml',
         # fallback_url='https://s3.amazonaws.com/static.plivo.com/answer.xml',
@@ -69,8 +70,7 @@ def monitorloop(movie, url_movie, freq, city, phnNo):
     url = "https://ticketnew.com/movies/"+city
     session.get(url)
 
-    n=1
-    while(n):
+    while(True):
         response = session.get(url_movie)
         soup = BeautifulSoup(response.content, "html.parser")
         showlisting = soup.find('a', string='Showlisting')
@@ -80,7 +80,6 @@ def monitorloop(movie, url_movie, freq, city, phnNo):
             break
         else:
             print('Bookings not yet open '+movie)
-        n-=1
         time.sleep(freq)
 
 def monitor(movie, freq, city, phnNo):
