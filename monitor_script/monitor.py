@@ -54,13 +54,12 @@ def makeCall(movie, city):
     # client.numbers.delete(number)
 
 if len(sys.argv) < 4:
-    print("Usage: python3 monitor.py <movie> <frequency for monitoring in seconds> <city> <url_movie>")
+    print("Usage: python3 monitor.py <movie> <city> <url_movie>")
     print("Eg: python3 monitor.py leo 5 hyderabad +919999999999")
 else:
     movie = sys.argv[1]
-    freq = int(sys.argv[2])
-    city = sys.argv[3]
-    url_movie = sys.argv[4]
+    city = sys.argv[2]
+    url_movie = sys.argv[3]
 
 session = requests.Session()  
 ua = UAS[random.randrange(len(UAS))]
@@ -84,7 +83,7 @@ while(True):
         break
     else:
         print('Bookings not yet open '+movie)
-    time.sleep(freq)
+    time.sleep(5)
 
 
 key = movie+"-"+city

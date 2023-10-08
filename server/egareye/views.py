@@ -1,12 +1,10 @@
 import re
 import subprocess
-import psutil
 from django.http import JsonResponse
 from egareye.helpers import getMovies, runOnVM
 from egareye.constants import RUNNING, UPCOMING
 from rest_framework.decorators import api_view
 from django.views.decorators.csrf import csrf_exempt
-from .models import MovieCityProcess, MovieCityPhoneNumber
 
 @api_view(['GET'])
 def getRunningMovies(request, city):
@@ -30,45 +28,44 @@ def getAllMovies(request, city):
 
 
 # for monitoring in vm
-@api_view(['POST'])
-@csrf_exempt
-def monitorMovie(request):
-    try:
-        data = request.data
-
-        name = data.get('name', '')
-        phoneNumber = data.get('phoneNumber', '')
-        selectedMovie = data.get('movie', '')
-        selectedCity = data.get('city', '')
-        frequency = data.get('frequency', '')
-        
-        command = "python3 start.py "+selectedMovie.lower().replace(" ", "-")+" "+selectedCity+" "+phoneNumber
-        runOnVM(command)
-
-        return JsonResponse({"message": "Movie monitoring started successfully!"})
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
-    
-
-# uncomment this and comment the above monitorMovie() function for local monitoring    
 # @api_view(['POST'])
 # @csrf_exempt
 # def monitorMovie(request):
 #     try:
 #         data = request.data
-#         # print(data)
+
 #         name = data.get('name', '')
 #         phoneNumber = data.get('phoneNumber', '')
 #         selectedMovie = data.get('movie', '')
 #         selectedCity = data.get('city', '')
-#         frequency = data.get('frequency', '')
-#         # print(name, phoneNumber,selectedCity, selectedMovie, frequency)
-#         # Construct the script path (replace this with your actual script path)
-#         script_path = '/home/gp/Documents/Dev/plivo/monitor_script/start.py'
+#         # frequency = data.get('frequency', '')
         
-#         # Execute the Python script using subprocess
-#         subprocess.run(['python3', script_path, selectedMovie.lower().replace(" ", "-"), frequency, selectedCity, phoneNumber])
+#         command = "python3 start.py "+selectedMovie.lower().replace(" ", "-")+" "+selectedCity+" "+phoneNumber
+#         runOnVM(command)
 
 #         return JsonResponse({"message": "Movie monitoring started successfully!"})
 #     except Exception as e:
 #         return JsonResponse({"error": str(e)}, status=500)
+    
+
+# uncomment this and comment the above monitorMovie() function for local monitoring    
+@api_view(['POST'])
+@csrf_exempt
+def monitorMovie(request):
+    try:
+        data = request.data
+        # print(data)
+        name = data.get('name', '')
+        phoneNumber = data.get('phoneNumber', '')
+        selectedMovie = data.get('movie', '')
+        selectedCity = data.get('city', '')
+        # print(name, phoneNumber,selectedCity, selectedMovie, frequency)
+        # Construct the script path (replace this with your actual script path)
+        script_path = '/home/gp/Documents/Dev/plivo/monitor_script/start.py'
+        
+        # Execute the Python script using subprocess
+        subprocess.run(['python3', script_path, selectedMovie.lower().replace(" ", "-"), selectedCity, phoneNumber])
+
+        return JsonResponse({"message": "Movie monitoring started successfully!"})
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)

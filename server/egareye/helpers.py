@@ -76,7 +76,7 @@ def runOnVM(command):
 
         stdin, stdout, stderr = ssh.exec_command(command, timeout=60)
 
-        print("Output of 'monitor.py' script:")
+        print("Output of 'start.py' script:")
         print(stdout.read().decode())
 
     except Exception as e:

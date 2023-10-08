@@ -50,7 +50,7 @@ def getMovieLink(movie_name, movie_urls):
     if(movie_link): return "https://ticketnew.com"+movie_link
     return None
 
-def monitor(movie, freq, city):
+def monitor(movie, city):
     running_movies = getMovies(city, RUNNING)
     upcoming_movies = getMovies(city, UPCOMING)
 
@@ -63,8 +63,8 @@ def monitor(movie, freq, city):
         return -1
     else:
         try:
-            print('python3', '/home/gp/Documents/Dev/plivo/monitor_script/monitor.py', movie, freq, city, url_movie)
-            process = subprocess.Popen(['python3', '/home/gp/Documents/Dev/plivo/monitor_script/monitor.py', movie, freq, city, url_movie],
+            print('python3', '/home/gp/Documents/Dev/plivo/monitor_script/monitor.py', movie, city, url_movie)
+            process = subprocess.Popen(['python3', '/home/gp/Documents/Dev/plivo/monitor_script/monitor.py', movie, city, url_movie],
                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE,
                                    close_fds=True, preexec_fn=os.setsid)
             process_id = process.pid
@@ -74,14 +74,13 @@ def monitor(movie, freq, city):
             return -1
 
 if __name__ == "__main__":
-    if len(sys.argv) < 5:
-        print("Usage: python3 start.py <movie> <frequency for monitoring in seconds> <city> <phnNo>")
-        print("Eg: python3 start.py leo 5 hyderabad +919999999999")
+    if len(sys.argv) < 4:
+        print("Usage: python3 start.py <movie> <city> <phnNo>")
+        print("Eg: python3 monitor.py leo hyderabad +919999999999")
     else:
         movie = sys.argv[1]
-        freq = sys.argv[2]
-        city = sys.argv[3]
-        phnNo = sys.argv[4]
+        city = sys.argv[2]
+        phnNo = sys.argv[3]
 
         phoneNumbersPath = '/home/gp/Documents/Dev/plivo/monitor_script/phoneNumbers.json'
         processIdPath = '/home/gp/Documents/Dev/plivo/monitor_script/processId.json'
@@ -105,15 +104,16 @@ if __name__ == "__main__":
         if key in processData:
             pid = processData[key]
             if not isProcessRunning(pid):
-                pid = monitor(movie, freq, city)
+                pid = monitor(movie, city)
                 if pid != -1:
                     processData[key] = pid
         else:
-            pid = monitor(movie, freq, city)
+            pid = monitor(movie, city)
             if pid != -1:
                 processData[key] = pid
 
         with open(processIdPath, 'w') as file:
             json.dump(processData, file)
+
 
 # python3 monitor.py <movie> <frequency for monitoring in seconds> <city> <url_movie>

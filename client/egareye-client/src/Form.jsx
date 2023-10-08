@@ -11,7 +11,8 @@ const Form = () => {
     const [phoneNumber, setPhoneNumber] = useState("");
     const [selectedMovie, setSelectedMovie] = useState("");
     const [selectedCity, setSelectedCity] = useState("hyderabad");
-    const [frequency, setFrequency] = useState("");
+    const [submittedText, setSubmittedText] = useState("")
+    // const [frequency, setFrequency] = useState("");
 
     const handleNameChange = (event) => {
         setName(event.target.value);
@@ -33,13 +34,14 @@ const Form = () => {
         setSelectedCity(event.target.value);
     };
 
-    const handleFrequencyChange = (event) => {
-        setFrequency(event.target.value);
-    };
+    // const handleFrequencyChange = (event) => {
+    //     setFrequency(event.target.value);
+    // };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        console.log(`${name} ${countryCode+phoneNumber} ${selectedMovie} ${selectedCity} ${frequency}`)
+        if (!(name && countryCode && phoneNumber && selectedMovie && selectedCity)) return
+        console.log(`${name} ${countryCode + phoneNumber} ${selectedMovie} ${selectedCity}`)
         try {
             const response = await fetch("http://127.0.0.1:8000/monitor", {
                 method: "POST",
@@ -51,16 +53,17 @@ const Form = () => {
                     phoneNumber: countryCode+phoneNumber,
                     movie: selectedMovie,
                     city: selectedCity,
-                    frequency: frequency,
+                    // frequency: frequency,
                 }),
             });
 
             if (response.ok) {
                 console.log("Data submitted successfully!");
+                setSubmittedText(`${phoneNumber} notification for ${selectedMovie} at ${selectedCity} setup`);
                 setName("");
                 setPhoneNumber("");
                 setSelectedMovie("");
-                setFrequency("");
+                // setFrequency("");
             } else {
                 console.error("Failed to submit data");
             }
@@ -154,7 +157,7 @@ const Form = () => {
           </select>
         </div>
         
-        <div className="mb-4">
+        {/* <div className="mb-4">
           <label htmlFor="frequency" className="block text-gray-700 text-sm font-bold mb-2">
             Select Frequency:
           </label>
@@ -167,10 +170,13 @@ const Form = () => {
             min="1"
             onChange={handleFrequencyChange}
           />
-        </div>
+        </div> */}
         <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
           Submit
-        </button>
+          </button>
+          <div className="text-green-700">
+            {submittedText && submittedText}
+          </div>
       </form>
     </div>
   );
